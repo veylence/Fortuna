@@ -58,3 +58,47 @@ std::vector<U64> Magics::generateBishopOccupancyMasks() {
   }
   return bishopMasks;
 }
+
+std::vector<std::vector<U64> > Magics::generateOccupancyVariations(std::vector<U64> masks) {
+  std::vector<std::vector<U64> > variations;
+
+  // Create all variations for each mask
+  for(int square = 0; square < Square::NUM; square++) {
+    std::vector<U64> squareVariations;
+    U64 mask = masks[square];
+
+    // Calculate all 2^count variations for this occupancy mask, where count
+    // is the number of 1 bits in the mask.
+    std::vector<U64> bits;
+    while (mask) {
+      bits.push_back(Bitboard::popLsb(mask));
+    }
+    bool acc[bits.size()];
+    generateVariations(bits, acc, squareVariations);
+    assert(squareVariations.size() == (1 << bits.size()));
+
+    variations.push_back(squareVariations);
+  }
+
+  return variations;
+}
+
+void Magics::generateVariations(std::vector<U64>& masks, bool acc[], std::vector<U64>& variations, int bitIndex) {
+  // Base case: Create the variation using what has been set in the accumulator
+  if(bitIndex >= masks.size()) {
+    U64 variation = 0;
+    for(int i = 0; i < masks.size(); i++) {
+      if(acc[i]) {
+        variation |= masks[i];
+      }
+    }
+    variations.push_back(variation);
+    return;
+  }
+
+  // Generate combinations for both possible values of this index (true + false)
+  acc[bitIndex] = true;
+  generateVariations(masks, acc, variations, bitIndex + 1);
+  acc[bitIndex] = false;
+  generateVariations(masks, acc, variations, bitIndex + 1);
+}

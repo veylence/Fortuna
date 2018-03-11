@@ -1,3 +1,4 @@
+
 #include "Bitboard.h"
 
 std::string Bitboard::toString(U64 bitboard) {
@@ -38,4 +39,20 @@ U64 Bitboard::popLsb(U64& bitboard) {
   U64 lsb = Bitboard::lsb(bitboard);
   bitboard &= bitboard - 1;
   return lsb;
+}
+
+int Bitboard::sparseCount(U64 bitboard) {
+  int count = 0;
+
+  while(bitboard) {
+    count++;
+    bitboard &= bitboard - 1; // Remove LS1B
+  }
+
+  return count;
+}
+
+int Bitboard::bsfIndex(U64 bitboard) {
+  assert(bitboard != 0);
+  return BIT_SCAN_INDEX[((bitboard & ~bitboard) * DE_BRUIJN_64) >> 58];
 }
