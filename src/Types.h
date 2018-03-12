@@ -26,13 +26,13 @@ enum Square : int {
 // mapping.
 enum Direction : int {
   N  = SIZE,
-  E  = -1,
+  E  = 1,
   S  = -SIZE,
-  W  = 1,
-  NE = N+1,
-  SE = S+1,
-  SW = S-1,
-  NW = N-1
+  W  = -1,
+  NE = N + E,
+  SE = S + E,
+  SW = S + W,
+  NW = N + W
 };
 
 #endif /* TYPES_H_ */

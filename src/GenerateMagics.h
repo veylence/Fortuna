@@ -1,6 +1,8 @@
 #ifndef SRC_GENERATEMAGICS_H_
 #define SRC_GENERATEMAGICS_H_
 
+#include <random>
+
 namespace Magics {
 /**
  * Creates a list of occupancy masks for rooks for each square. The mask
@@ -67,6 +69,56 @@ std::vector<std::vector<U64> > generateOccupancyVariations(std::vector<U64> mask
  * accumulator will not be changed.
  */
 void generateVariations(std::vector<U64>& masks, bool acc[], std::vector<U64>& variations, int bitIndex=0);
+
+/**
+ * Generates the attack set of all rook occupancy mask variations. The attack
+ * set of an occupancy mask is the bitboard of the first blocker or edge
+ * encountered in each direction that the rook can move.
+ *
+ * For example, the attack set for an occupancy mask for a rook on c1 is:
+ *  (Occupancy Mask)         (Attack set)
+ * 8 . . . . . . . .      8 . . . . . . . .
+ * 7 . . X . . . . .      7 . . . . . . . .
+ * 6 . . . . . . . .      6 . . . . . . . .
+ * 5 . . X . . . . .      5 . . X . . . . .
+ * 4 . . . . . . . .      4 . . . . . . . .
+ * 3 . . . . . . . .      3 . . . . . . . .
+ * 2 . . . . . . . .      2 . . . . . . . .
+ * 1 . X . X X . X .      1 . X . X . . . .
+ *   a b c d e f g h        a b c d e f g h
+ *
+ * @param variations The rook occupancy mask variations for each square.
+ * @return The attack set for each of the given occupancy mask variations. The
+ * index of each attack set corresponds to the index of the variation it is for
+ * in the given variations list.
+ */
+std::vector<std::vector<U64> > generateRookAttackSets(const std::vector<std::vector<U64> >& variations);
+
+/**
+ * Generates the attack set of all bishop occupancy mask variations. The attack
+ * set of an occupancy mask is the bitboard of the first blocker or edge
+ * encountered in each direction that the bishop can move.
+ *
+ * For example, the attack set for an occupancy mask for a bishop on d4 is:
+ *  (Occupancy Mask)         (Attack set)
+ * 8 . . . . . . . .      8 . . . . . . . .
+ * 7 . . . . . . X .      7 . . . . . . . .
+ * 6 . X . . . X . .      6 . . . . . X . .
+ * 5 . . X . . . . .      5 . . X . . . . .
+ * 4 . . . . . . . .      4 . . . . . . . .
+ * 3 . . . . X . . .      3 . . . . X . . .
+ * 2 . . . . . X . .      2 . . . . . . . .
+ * 1 . . . . . . . .      1 X . . . . . . .
+ *   a b c d e f g h        a b c d e f g h
+ *
+ * @param variations The bishop occupancy mask variations for each square.
+ * @return The attack set for each of the given occupancy mask variations. The
+ * index of each attack set corresponds to the index of the variation it is for
+ * in the given variations list.
+ */
+std::vector<std::vector<U64> > generateBishopAttackSets(const std::vector<std::vector<U64> >& variations);
+
+std::vector<U64> generateMagics(std::vector<U64> masks, std::vector<std::vector<U64> > variations, std::vector<std::vector<U64> > attackSets);
 }
 
 #endif /* SRC_GENERATEMAGICS_H_ */

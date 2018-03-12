@@ -62,8 +62,8 @@ U64 lsb(U64 bitboard);
 U64 popLsb(U64& bitboard);
 
 /**
- * Counts the number of 1 bits in a bitboard (i.e. computes the Hamming
- * weight).
+ * Counts the number of 1 bits in a bitboard (i.e. computes the population
+ * count/Hamming weight).
  *
  * This implementation should be preferred when the bitboard is sparse.
  *

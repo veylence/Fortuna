@@ -18,12 +18,12 @@ std::vector<U64> Magics::generateRookOccupancyMasks() {
     for (int i = square + S; i >= SIZE; i += S) {
       mask |= 1ULL << i;
     }
-    // West rank
-    for (int i = square + W; i % SIZE != 0 && i % SIZE != SIZE - 1; i += W) {
+    // East rank
+    for (int i = square + E; i % SIZE != 0 && i % SIZE != SIZE - 1; i += E) {
       mask |= 1ULL << i;
     }
-    // East rank
-    for (int i = square + E; i % SIZE != 0 && i % SIZE != SIZE - 1 && i >= 0; i += E) {
+    // West rank
+    for (int i = square + W; i % SIZE != 0 && i % SIZE != SIZE - 1 && i >= 0; i += W) {
       mask |= 1ULL << i;
     }
 
@@ -41,16 +41,16 @@ std::vector<U64> Magics::generateBishopOccupancyMasks() {
     for (int i = square + NE; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::NUM - SIZE; i += NE) {
       mask |= 1ULL << i;
     }
-    // South-east diagonal
-    for (int i = square + SE; i % SIZE != 0 && i % SIZE != SIZE - 1 && i >= SIZE; i += SE) {
-      mask |= 1ULL << i;
-    }
     // South-west diagonal
     for (int i = square + SW; i % SIZE != 0 && i % SIZE != SIZE - 1 && i >= SIZE; i += SW) {
       mask |= 1ULL << i;
     }
     // North-west diagonal
     for (int i = square + NW; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::NUM - SIZE; i += NW) {
+      mask |= 1ULL << i;
+    }
+    // South-east diagonal
+    for (int i = square + SE; i % SIZE != 0 && i % SIZE != SIZE - 1 && i >= SIZE; i += SE) {
       mask |= 1ULL << i;
     }
 
@@ -101,4 +101,136 @@ void Magics::generateVariations(std::vector<U64>& masks, bool acc[], std::vector
   generateVariations(masks, acc, variations, bitIndex + 1);
   acc[bitIndex] = false;
   generateVariations(masks, acc, variations, bitIndex + 1);
+}
+
+std::vector<std::vector<U64> > Magics::generateRookAttackSets(const std::vector<std::vector<U64> >& variations) {
+  std::vector<std::vector<U64> > rookAttackSet;
+
+  // Create attack set for all variations of each square
+  for(int square = 0; square < variations.size(); square++) {
+    std::vector<U64> squareVariationsAttackSets;
+
+    // Create attack set for each variation for this square
+    for(int i = 0; i < variations[square].size(); i++) {
+      U64 variation = variations[square][i];
+      int j;
+      U64 attackSet = 0;
+
+      for(j = square + N; j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += N);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + S; j >= SIZE && !(variation & (1ULL << j)); j += S);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + E; j % SIZE != 0 && j % SIZE != SIZE - 1 && !(variation & (1ULL << j)); j += E);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + W; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= 0 && !(variation & (1ULL << j)); j += W);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+
+      squareVariationsAttackSets.push_back(attackSet);
+    }
+
+    rookAttackSet.push_back(squareVariationsAttackSets);
+  }
+
+  return rookAttackSet;
+}
+
+std::vector<std::vector<U64> > Magics::generateBishopAttackSets(const std::vector<std::vector<U64> >& variations) {
+  std::vector<std::vector<U64> > bishopAttackSet;
+
+  // Create attack set for all variations of each square
+  for(int square = 0; square < variations.size(); square++) {
+    std::vector<U64> squareVariationsAttackSets;
+
+    // Create attack set for each variation for this square
+    for(int i = 0; i < variations[square].size(); i++) {
+      U64 variation = variations[square][i];
+      int j;
+      U64 attackSet = 0;
+
+      for(j = square + NE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NE);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + SW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SW);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + NW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NW);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+      for(j = square + SE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SE);
+      if (j >= 0 && j < Square::NUM) {
+        attackSet |= (1ULL << j);
+      }
+
+      squareVariationsAttackSets.push_back(attackSet);
+    }
+
+    bishopAttackSet.push_back(squareVariationsAttackSets);
+  }
+
+  return bishopAttackSet;
+}
+
+std::vector<U64> Magics::generateMagics(std::vector<U64> masks, std::vector<std::vector<U64> > variations, std::vector<std::vector<U64> > attackSets) {
+  // 64-bit random number generator
+  std::random_device rd;
+  std::mt19937_64 mt(rd());
+  std::uniform_int_distribution<U64> rand;
+
+  std::vector<U64> magics;
+
+  // Generate magic for each square
+  for(int square = 0; square < Square::NUM; square++) {
+    int bitCount = Bitboard::sparseCount(masks[square]);
+    int variationCount = variations[square].size();
+
+    // Table of where each variation mask will be mapped to after the magic
+    // transformation is applied.
+    U64 used[variationCount];
+    // The candidate magic
+    U64 magic;
+    // Whether this magic candidate is invalid
+    bool invalid;
+
+    int attempts = 0;
+    do {
+      attempts++;
+
+      // Choose a new candidate magic with few 1 bits
+      magic = rand(mt) & rand(mt) & rand(mt) & rand(mt);
+      // Reset table
+      for(int i = 0; i < variationCount; i++) {
+        used[i] = 0;
+      }
+
+      // Test this magic for all occupancy variation masks
+      invalid = false;
+
+      for(int i = 0; !invalid && i < variationCount; i++) {
+        // Do magic transformation to obtain index
+        int index = (variations[square][i] * magic) >> (64 - bitCount);
+
+        if(!used[index]) {
+          // If this index isn't already mapped to, map this attack set to it
+          used[index] = attackSets[square][i];
+        } else if(used[index] != attackSets[square][i]) {
+          // If this index is already mapped by a different attack set, this
+          // magic is invalid
+          invalid = true;
+        }
+      }
+    } while(invalid);
+    magics.push_back(magic);
+  }
+  return magics;
 }
