@@ -68,12 +68,14 @@ std::vector<std::vector<U64> > generateOccupancyVariations(std::vector<U64> mask
  * combinations will be generated. Indices less than this value in the
  * accumulator will not be changed.
  */
-void generateVariations(std::vector<U64>& masks, bool acc[], std::vector<U64>& variations, int bitIndex=0);
+void generateVariations(std::vector<U64>& masks, bool acc[],
+                        std::vector<U64>& variations, int bitIndex=0);
 
 /**
  * Generates the attack set of all rook occupancy mask variations. The attack
- * set of an occupancy mask is the bitboard of the first blocker or edge
- * encountered in each direction that the rook can move.
+ * set of an occupancy mask is the bitboard of all moves that a rook can make
+ * from the square the mask is a variation for (including the first blocker
+ * encountered in the occupancy mask).
  *
  * For example, the attack set for an occupancy mask for a rook on c1 is:
  *  (Occupancy Mask)         (Attack set)
@@ -81,10 +83,10 @@ void generateVariations(std::vector<U64>& masks, bool acc[], std::vector<U64>& v
  * 7 . . X . . . . .      7 . . . . . . . .
  * 6 . . . . . . . .      6 . . . . . . . .
  * 5 . . X . . . . .      5 . . X . . . . .
- * 4 . . . . . . . .      4 . . . . . . . .
- * 3 . . . . . . . .      3 . . . . . . . .
- * 2 . . . . . . . .      2 . . . . . . . .
- * 1 . X . X X . X .      1 . X . X . . . .
+ * 4 . . . . . . . .      4 . . X . . . . .
+ * 3 . . . . . . . .      3 . . X . . . . .
+ * 2 . . . . . . . .      2 . . X . . . . .
+ * 1 . . . X X . X .      1 X X . X . . . .
  *   a b c d e f g h        a b c d e f g h
  *
  * @param variations The rook occupancy mask variations for each square.
@@ -96,18 +98,19 @@ std::vector<std::vector<U64> > generateRookAttackSets(const std::vector<std::vec
 
 /**
  * Generates the attack set of all bishop occupancy mask variations. The attack
- * set of an occupancy mask is the bitboard of the first blocker or edge
- * encountered in each direction that the bishop can move.
+ * set of an occupancy mask is the bitboard of all moves that a bishop can make
+ * from the square the mask is a variation for (including the first blocker
+ * encountered in the occupancy mask).
  *
  * For example, the attack set for an occupancy mask for a bishop on d4 is:
  *  (Occupancy Mask)         (Attack set)
  * 8 . . . . . . . .      8 . . . . . . . .
  * 7 . . . . . . X .      7 . . . . . . . .
  * 6 . X . . . X . .      6 . . . . . X . .
- * 5 . . X . . . . .      5 . . X . . . . .
+ * 5 . . X . . . . .      5 . . X . X . . .
  * 4 . . . . . . . .      4 . . . . . . . .
- * 3 . . . . X . . .      3 . . . . X . . .
- * 2 . . . . . X . .      2 . . . . . . . .
+ * 3 . . . . X . . .      3 . . X . X . . .
+ * 2 . . . . . X . .      2 . X . . . . . .
  * 1 . . . . . . . .      1 X . . . . . . .
  *   a b c d e f g h        a b c d e f g h
  *
@@ -118,7 +121,9 @@ std::vector<std::vector<U64> > generateRookAttackSets(const std::vector<std::vec
  */
 std::vector<std::vector<U64> > generateBishopAttackSets(const std::vector<std::vector<U64> >& variations);
 
-std::vector<U64> generateMagics(std::vector<U64> masks, std::vector<std::vector<U64> > variations, std::vector<std::vector<U64> > attackSets);
+std::vector<U64> generateMagics(std::vector<U64> masks,
+                                std::vector<std::vector<U64> > variations,
+                                std::vector<std::vector<U64> > attackSets);
 }
 
 #endif /* SRC_GENERATEMAGICS_H_ */

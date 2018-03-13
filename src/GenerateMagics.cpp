@@ -83,7 +83,8 @@ std::vector<std::vector<U64> > Magics::generateOccupancyVariations(std::vector<U
   return variations;
 }
 
-void Magics::generateVariations(std::vector<U64>& masks, bool acc[], std::vector<U64>& variations, int bitIndex) {
+void Magics::generateVariations(std::vector<U64>& masks, bool acc[],
+                                std::vector<U64>& variations, int bitIndex) {
   // Base case: Create the variation using what has been set in the accumulator
   if(bitIndex >= masks.size()) {
     U64 variation = 0;
@@ -116,21 +117,45 @@ std::vector<std::vector<U64> > Magics::generateRookAttackSets(const std::vector<
       int j;
       U64 attackSet = 0;
 
-      for(j = square + N; j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += N);
-      if (j >= 0 && j < Square::NUM) {
+//      for(j = square + N; j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += N);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + S; j >= SIZE && !(variation & (1ULL << j)); j += S);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + E; j % SIZE != 0 && j % SIZE != SIZE - 1 && !(variation & (1ULL << j)); j += E);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + W; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= 0 && !(variation & (1ULL << j)); j += W);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+      for (j = square + N; j < Square::NUM; j += N) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + S; j >= SIZE && !(variation & (1ULL << j)); j += S);
-      if (j >= 0 && j < Square::NUM) {
+      for (j = square + S; j >= 0; j += S) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + E; j % SIZE != 0 && j % SIZE != SIZE - 1 && !(variation & (1ULL << j)); j += E);
-      if (j >= 0 && j < Square::NUM) {
+      for (j = square + E; j % SIZE != 0; j += E) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + W; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= 0 && !(variation & (1ULL << j)); j += W);
-      if (j >= 0 && j < Square::NUM) {
+      for (j = square + W; j % SIZE != SIZE - 1 && j >= 0; j += W) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
 
       squareVariationsAttackSets.push_back(attackSet);
@@ -155,21 +180,45 @@ std::vector<std::vector<U64> > Magics::generateBishopAttackSets(const std::vecto
       int j;
       U64 attackSet = 0;
 
-      for(j = square + NE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NE);
-      if (j >= 0 && j < Square::NUM) {
+//      for(j = square + NE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NE);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + SW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SW);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + NW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NW);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+//      for(j = square + SE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SE);
+//      if (j >= 0 && j < Square::NUM) {
+//        attackSet |= (1ULL << j);
+//      }
+      for(j = square + NE; j % SIZE != 0 && j < Square::NUM; j += NE) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + SW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SW);
-      if (j >= 0 && j < Square::NUM) {
+      for(j = square + SW; j % SIZE != SIZE - 1 && j >= 0; j += SW) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + NW; j % SIZE != 0 && j % SIZE != SIZE - 1 && j < Square::NUM - SIZE && !(variation & (1ULL << j)); j += NW);
-      if (j >= 0 && j < Square::NUM) {
+      for(j = square + NW; j % SIZE != SIZE - 1 && j < Square::NUM; j += NW) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
-      for(j = square + SE; j % SIZE != 0 && j % SIZE != SIZE - 1 && j >= SIZE && !(variation & (1ULL << j)); j += SE);
-      if (j >= 0 && j < Square::NUM) {
+      for(j = square + SE; j % SIZE != 0 && j >= 0; j += SE) {
         attackSet |= (1ULL << j);
+        if (variation & (1ULL << j)) {
+          break;
+        }
       }
 
       squareVariationsAttackSets.push_back(attackSet);
@@ -181,7 +230,9 @@ std::vector<std::vector<U64> > Magics::generateBishopAttackSets(const std::vecto
   return bishopAttackSet;
 }
 
-std::vector<U64> Magics::generateMagics(std::vector<U64> masks, std::vector<std::vector<U64> > variations, std::vector<std::vector<U64> > attackSets) {
+std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
+                                        std::vector<std::vector<U64> > variations,
+                                        std::vector<std::vector<U64> > attackSets) {
   // 64-bit random number generator
   std::random_device rd;
   std::mt19937_64 mt(rd());
@@ -230,6 +281,7 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks, std::vector<std:
         }
       }
     } while(invalid);
+    // std::cout << "0x" << std::hex << magic << "ULL," << std::dec << std::endl;
     magics.push_back(magic);
   }
   return magics;
