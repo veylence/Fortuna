@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 // Uncomment to disable assert()
 // #define NDEBUG
@@ -21,13 +22,22 @@ int main() {
   //    std::cout << std::hex << m << std::endl;
   //  }
 
-  MoveGenerator::init();
-  int square = 36;
-  U64 occupancyMask = rookOccupancyMaskVariations[square][1000]; // A1, variation 1000
-  int index = (occupancyMask * MoveGenerator::MAGIC_NUMBERS_ROOKS[square]) >> MoveGenerator::MAGIC_NUMBER_SHIFTS_ROOK[square];
-  U64 moves = MoveGenerator::ROOK_MOVES[square][index];
+//  MoveGenerator::init();
+//  int square = 36;
+//  U64 occupancyMask = rookOccupancyMaskVariations[square][500]; // A1, variation 1000
+//  int index = (occupancyMask * MoveGenerator::MAGIC_NUMBERS_ROOKS[square]) >> MoveGenerator::MAGIC_NUMBER_SHIFTS_ROOK[square];
+//  U64 moves = MoveGenerator::ROOK_MOVES[square][index];
+//
+//  std::cout << Bitboard::toString(occupancyMask) << std::endl;
+//  std::cout << Bitboard::toString(moves) << std::endl;
 
-  std::cout << Bitboard::toString(occupancyMask) << std::endl;
-  std::cout << Bitboard::toString(moves) << std::endl;
-
+  auto start = std::chrono::high_resolution_clock::now();
+  U64 x = 1;
+  for(U64 i = 1; i < 100000000; i++) {
+    x *= i;
+    x >>= 32;
+  }
+  auto time = std::chrono::high_resolution_clock::now() - start;
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
+//  std::cout << x << std::endl;
 }

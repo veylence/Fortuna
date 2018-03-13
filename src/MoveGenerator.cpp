@@ -10,6 +10,7 @@ void MoveGenerator::init() {
   std::vector<std::vector<U64> > rookAttackSets = Magics::generateRookAttackSets(rookOccupancyMaskVariations);
 
   for(int square = 0; square < Square::NUM; square++) {
+    free(ROOK_MOVES[square]);
     ROOK_MOVES[square] = new U64[rookOccupancyMaskVariations[square].size()];
 
     for(int i = 0; i < rookOccupancyMaskVariations[square].size(); i++) {
@@ -26,6 +27,7 @@ void MoveGenerator::init() {
   std::vector<std::vector<U64> > bishopAttackSets = Magics::generateBishopAttackSets(bishopOccupancyMaskVariations);
 
   for(int square = 0; square < Square::NUM; square++) {
+    free(BISHOP_MOVES[square]);
     BISHOP_MOVES[square] = new U64[bishopOccupancyMaskVariations[square].size()];
 
     for(int i = 0; i < bishopOccupancyMaskVariations[square].size(); i++) {
