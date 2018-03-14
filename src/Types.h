@@ -18,8 +18,8 @@ enum Square : int {
   F1, F2, F3, F4, F5, F6, F7, F8,
   G1, G2, G3, G4, G5, G6, G7, G8,
   H1, H2, H3, H4, H5, H6, H7, H8,
-  NONE,
-  NUM = 64
+  SQ_NONE,
+  SQ_NUM = 64
 };
 
 // Cardinal directions on the board from white's perspective, using LERF
@@ -33,6 +33,20 @@ enum Direction : int {
   SE = S + E,
   SW = S + W,
   NW = N + W
+};
+
+// Player colors
+enum Color : int {
+  WHITE, BLACK,
+  COLOR_NUM
+};
+
+// Piece types and colors
+enum Piece : int {
+  W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
+  B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING,
+  PIECE_NONE,
+  PIECE_NUM = 12
 };
 
 #endif /* TYPES_H_ */

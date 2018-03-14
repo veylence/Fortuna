@@ -31,13 +31,7 @@ int main() {
 //  std::cout << Bitboard::toString(occupancyMask) << std::endl;
 //  std::cout << Bitboard::toString(moves) << std::endl;
 
-  auto start = std::chrono::high_resolution_clock::now();
-  U64 x = 1;
-  for(U64 i = 1; i < 100000000; i++) {
-    x *= i;
-    x >>= 32;
-  }
-  auto time = std::chrono::high_resolution_clock::now() - start;
-  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
-//  std::cout << x << std::endl;
+//  auto start = std::chrono::high_resolution_clock::now();
+//  auto time = std::chrono::high_resolution_clock::now() - start;
+//  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
 }

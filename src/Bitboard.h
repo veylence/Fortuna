@@ -11,7 +11,7 @@ namespace Bitboard {
 // 64-bit de Bruijn sequence used to determine index in a bitscan
 const U64 DE_BRUIJN_64 = 0x03f79d71b4cb0a89ULL;
 // Lookup table for bitscan indices
-const int BIT_SCAN_INDEX[Square::NUM] = {
+const int BIT_SCAN_INDEX[Square::SQ_NUM] = {
   0,  1,  48,  2, 57, 49, 28,  3,
   61, 58, 50, 42, 38, 29, 17,  4,
   62, 55, 59, 36, 53, 51, 43, 22,
@@ -65,12 +65,10 @@ U64 popLsb(U64& bitboard);
  * Counts the number of 1 bits in a bitboard (i.e. computes the population
  * count/Hamming weight).
  *
- * This implementation should be preferred when the bitboard is sparse.
- *
  * @param bitboard The bitboard to count the number of 1 bits of.
  * @return The number of 1 bits in the bitboard.
  */
-int sparseCount(U64 bitboard);
+int popCount(U64 bitboard);
 
 /**
  * Bitscan forward to determine the index of the least significant 1 bit in a

@@ -41,15 +41,11 @@ U64 Bitboard::popLsb(U64& bitboard) {
   return lsb;
 }
 
-int Bitboard::sparseCount(U64 bitboard) {
-  int count = 0;
-
-  while(bitboard) {
-    count++;
-    bitboard &= bitboard - 1; // Remove LS1B
-  }
-
-  return count;
+int Bitboard::popCount(U64 bitboard) {
+  bitboard = bitboard - ((bitboard >> 1) & 0x5555555555555555ULL);
+  bitboard = (bitboard & 0x3333333333333333ULL) + ((bitboard >> 2) & 0x3333333333333333ULL);
+  bitboard = (bitboard + (bitboard >> 4)) & 0x0F0F0F0F0F0F0F0FULL;
+  return (bitboard * 0x0101010101010101ULL) >> 56;
 }
 
 int Bitboard::bsfIndex(U64 bitboard) {

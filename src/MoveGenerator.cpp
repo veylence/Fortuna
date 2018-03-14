@@ -1,7 +1,7 @@
 #include "MoveGenerator.h"
 
-U64* MoveGenerator::ROOK_MOVES[Square::NUM];
-U64* MoveGenerator::BISHOP_MOVES[Square::NUM];
+U64* MoveGenerator::ROOK_MOVES[Square::SQ_NUM];
+U64* MoveGenerator::BISHOP_MOVES[Square::SQ_NUM];
 
 void MoveGenerator::init() {
   // Initialize rook move database
@@ -9,7 +9,7 @@ void MoveGenerator::init() {
   std::vector<std::vector<U64> > rookOccupancyMaskVariations = Magics::generateOccupancyVariations(rookOccupancyMasks);
   std::vector<std::vector<U64> > rookAttackSets = Magics::generateRookAttackSets(rookOccupancyMaskVariations);
 
-  for(int square = 0; square < Square::NUM; square++) {
+  for(int square = 0; square < Square::SQ_NUM; square++) {
     free(ROOK_MOVES[square]);
     ROOK_MOVES[square] = new U64[rookOccupancyMaskVariations[square].size()];
 
@@ -26,7 +26,7 @@ void MoveGenerator::init() {
   std::vector<std::vector<U64> > bishopOccupancyMaskVariations = Magics::generateOccupancyVariations(bishopOccupancyMasks);
   std::vector<std::vector<U64> > bishopAttackSets = Magics::generateBishopAttackSets(bishopOccupancyMaskVariations);
 
-  for(int square = 0; square < Square::NUM; square++) {
+  for(int square = 0; square < Square::SQ_NUM; square++) {
     free(BISHOP_MOVES[square]);
     BISHOP_MOVES[square] = new U64[bishopOccupancyMaskVariations[square].size()];
 

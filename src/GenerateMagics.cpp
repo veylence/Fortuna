@@ -7,11 +7,11 @@
 
 std::vector<U64> Magics::generateRookOccupancyMasks() {
   std::vector<U64> rookMasks;
-  for (int square = 0; square < Square::NUM; square++) {
+  for (int square = 0; square < Square::SQ_NUM; square++) {
     U64 mask = 0;
 
     // North file
-    for (int i = square + N; i < Square::NUM - SIZE; i += N) {
+    for (int i = square + N; i < Square::SQ_NUM - SIZE; i += N) {
       mask |= 1ULL << i;
     }
     // South file
@@ -34,11 +34,11 @@ std::vector<U64> Magics::generateRookOccupancyMasks() {
 
 std::vector<U64> Magics::generateBishopOccupancyMasks() {
   std::vector<U64> bishopMasks;
-  for (int square = 0; square < Square::NUM; square++) {
+  for (int square = 0; square < Square::SQ_NUM; square++) {
     U64 mask = 0;
 
     // North-east diagonal
-    for (int i = square + NE; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::NUM - SIZE; i += NE) {
+    for (int i = square + NE; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::SQ_NUM - SIZE; i += NE) {
       mask |= 1ULL << i;
     }
     // South-west diagonal
@@ -46,7 +46,7 @@ std::vector<U64> Magics::generateBishopOccupancyMasks() {
       mask |= 1ULL << i;
     }
     // North-west diagonal
-    for (int i = square + NW; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::NUM - SIZE; i += NW) {
+    for (int i = square + NW; i % SIZE != 0 && i % SIZE != SIZE - 1 && i < Square::SQ_NUM - SIZE; i += NW) {
       mask |= 1ULL << i;
     }
     // South-east diagonal
@@ -63,7 +63,7 @@ std::vector<std::vector<U64> > Magics::generateOccupancyVariations(std::vector<U
   std::vector<std::vector<U64> > variations;
 
   // Create all variations for each mask
-  for(int square = 0; square < Square::NUM; square++) {
+  for(int square = 0; square < Square::SQ_NUM; square++) {
     std::vector<U64> squareVariations;
     U64 mask = masks[square];
 
@@ -133,7 +133,7 @@ std::vector<std::vector<U64> > Magics::generateRookAttackSets(const std::vector<
 //      if (j >= 0 && j < Square::NUM) {
 //        attackSet |= (1ULL << j);
 //      }
-      for (j = square + N; j < Square::NUM; j += N) {
+      for (j = square + N; j < Square::SQ_NUM; j += N) {
         attackSet |= (1ULL << j);
         if (variation & (1ULL << j)) {
           break;
@@ -196,7 +196,7 @@ std::vector<std::vector<U64> > Magics::generateBishopAttackSets(const std::vecto
 //      if (j >= 0 && j < Square::NUM) {
 //        attackSet |= (1ULL << j);
 //      }
-      for(j = square + NE; j % SIZE != 0 && j < Square::NUM; j += NE) {
+      for(j = square + NE; j % SIZE != 0 && j < Square::SQ_NUM; j += NE) {
         attackSet |= (1ULL << j);
         if (variation & (1ULL << j)) {
           break;
@@ -208,7 +208,7 @@ std::vector<std::vector<U64> > Magics::generateBishopAttackSets(const std::vecto
           break;
         }
       }
-      for(j = square + NW; j % SIZE != SIZE - 1 && j < Square::NUM; j += NW) {
+      for(j = square + NW; j % SIZE != SIZE - 1 && j < Square::SQ_NUM; j += NW) {
         attackSet |= (1ULL << j);
         if (variation & (1ULL << j)) {
           break;
@@ -241,8 +241,8 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
   std::vector<U64> magics;
 
   // Generate magic for each square
-  for(int square = 0; square < Square::NUM; square++) {
-    int bitCount = Bitboard::sparseCount(masks[square]);
+  for(int square = 0; square < Square::SQ_NUM; square++) {
+    int bitCount = Bitboard::popCount(masks[square]);
     int variationCount = variations[square].size();
 
     // Table of where each variation mask will be mapped to after the magic

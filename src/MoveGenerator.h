@@ -266,9 +266,9 @@ const U64 KNIGHT_MOVES[] = {
 };
 
 // Rook magic bitboard move table
-extern U64* ROOK_MOVES[Square::NUM];
+extern U64* ROOK_MOVES[Square::SQ_NUM];
 // Bishop magic bitboard move table
-extern U64* BISHOP_MOVES[Square::NUM];
+extern U64* BISHOP_MOVES[Square::SQ_NUM];
 
 /**
  * Initializes the rook and bishop magic bitboard move tables.
