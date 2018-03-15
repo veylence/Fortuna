@@ -7,6 +7,7 @@
 #include "Bitboard.h"
 #include "GenerateMagics.h"
 #include "MoveGenerator.h"
+#include "Types.h"
 
 int main() {
   std::vector<U64> rookOccupancyMasks = Magics::generateRookOccupancyMasks();
@@ -17,7 +18,8 @@ int main() {
   std::vector<std::vector<U64> > bishopOccupancyMaskVariations = Magics::generateOccupancyVariations(bishopOccupancyMasks);
   std::vector<std::vector<U64> > bishopAttackSets = Magics::generateBishopAttackSets(bishopOccupancyMaskVariations);
 
-  //  std::vector<U64> magics = Magics::generateMagics(bishopOccupancyMasks, bishopOccupancyMaskVariations, bishopAttackSets);
+    std::vector<U64> magics = Magics::generateMagics(rookOccupancyMasks, rookOccupancyMaskVariations, rookAttackSets);
+//    std::vector<U64> magics = Magics::generateMagics(bishopOccupancyMasks, bishopOccupancyMaskVariations, bishopAttackSets);
   //  for(const auto& m : magics) {
   //    std::cout << std::hex << m << std::endl;
   //  }

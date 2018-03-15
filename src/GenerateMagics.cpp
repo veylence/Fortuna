@@ -242,6 +242,7 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
 
   // Generate magic for each square
   for(int square = 0; square < Square::SQ_NUM; square++) {
+    square = A1;
     int bitCount = Bitboard::popCount(masks[square]);
     int variationCount = variations[square].size();
 
@@ -254,11 +255,13 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
     bool invalid;
 
     int attempts = 0;
+    int usedCount = 0;
     do {
+      usedCount = 0;
       attempts++;
 
       // Choose a new candidate magic with few 1 bits
-      magic = rand(mt) & rand(mt) & rand(mt) & rand(mt);
+      magic = rand(mt) & rand(mt) & rand(mt);// & rand(mt);
       // Reset table
       for(int i = 0; i < variationCount; i++) {
         used[i] = 0;
@@ -274,6 +277,7 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
         if(!used[index]) {
           // If this index isn't already mapped to, map this attack set to it
           used[index] = attackSets[square][i];
+          usedCount++;
         } else if(used[index] != attackSets[square][i]) {
           // If this index is already mapped by a different attack set, this
           // magic is invalid
@@ -281,6 +285,12 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
         }
       }
     } while(invalid);
+    if(usedCount == variationCount) {
+      square--;
+//      std::cout << 1 << std::endl;
+    } else {
+      std::cout << square << " 0x" << std::hex << magic << std::dec << "ULL, " << usedCount << " " << variationCount << std::endl;
+    }
     // std::cout << "0x" << std::hex << magic << "ULL," << std::dec << std::endl;
     magics.push_back(magic);
   }
