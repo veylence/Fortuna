@@ -50,5 +50,5 @@ int Bitboard::popCount(U64 bitboard) {
 
 int Bitboard::bsfIndex(U64 bitboard) {
   assert(bitboard != 0);
-  return BIT_SCAN_INDEX[((bitboard & ~bitboard) * DE_BRUIJN_64) >> 58];
+  return BIT_SCAN_INDEX[((bitboard & -bitboard) * DE_BRUIJN_64) >> 58];
 }

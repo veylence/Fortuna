@@ -1,9 +1,10 @@
 #include "MoveGenerator.h"
+#include "Bitboard.h"
 
-U64* MoveGenerator::ROOK_MOVES[Square::SQ_NUM];
-U64* MoveGenerator::BISHOP_MOVES[Square::SQ_NUM];
+U64* MoveGen::ROOK_MOVES[Square::SQ_NUM];
+U64* MoveGen::BISHOP_MOVES[Square::SQ_NUM];
 
-void MoveGenerator::init() {
+void MoveGen::init() {
   // Initialize rook move database
   std::vector<U64> rookOccupancyMasks = Magics::generateRookOccupancyMasks();
   std::vector<std::vector<U64> > rookOccupancyMaskVariations = Magics::generateOccupancyVariations(rookOccupancyMasks);
@@ -37,5 +38,15 @@ void MoveGenerator::init() {
       BISHOP_MOVES[square][magicIndex] = bishopAttackSets[square][i];
     }
   }
+}
+
+U64 MoveGen::genKnightMoves(U64 piece, U64 myBoard) {
+  int index = Bitboard::bsfIndex(piece);
+  return KNIGHT_MOVES[index] & ~myBoard;
+}
+
+U64 MoveGen::genKingMoves(U64 piece, U64 myBoard) {
+  int index = Bitboard::bsfIndex(piece);
+  return KING_MOVES[index] & ~myBoard;
 }
 

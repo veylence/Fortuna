@@ -285,12 +285,12 @@ std::vector<U64> Magics::generateMagics(std::vector<U64> masks,
         }
       }
     } while(invalid);
-    if(usedCount == variationCount) {
-      square--;
+//    if(usedCount == variationCount) {
+//      square--;
 //      std::cout << 1 << std::endl;
-    } else {
-      std::cout << square << " 0x" << std::hex << magic << std::dec << "ULL, " << usedCount << " " << variationCount << std::endl;
-    }
+//    } else {
+//      std::cout << square << " 0x" << std::hex << magic << std::dec << "ULL, " << usedCount << " " << variationCount << std::endl;
+//    }
     // std::cout << "0x" << std::hex << magic << "ULL," << std::dec << std::endl;
     magics.push_back(magic);
   }

@@ -3,12 +3,11 @@
 #define MOVEGENERATOR_H_
 
 #include <vector>
-#include <cstdint>
 
 #include "Types.h"
 #include "GenerateMagics.h"
 
-namespace MoveGenerator {
+namespace MoveGen {
 // How many 1 bits in the occupancy mask of a rook on some square.
 // Used to compute an index for magic bitboards.
 const int MAGIC_NUMBER_SHIFTS_ROOK[] = {
@@ -274,6 +273,9 @@ extern U64* BISHOP_MOVES[Square::SQ_NUM];
  * Initializes the rook and bishop magic bitboard move tables.
  */
 void init();
+
+U64 genKnightMoves(U64 piece, U64 myBoard);
+U64 genKingMoves(U64 piece, U64 myBoard);
 }
 
 #endif /* MOVEGENERATOR_H_ */
