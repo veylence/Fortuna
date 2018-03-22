@@ -3,6 +3,7 @@
 #define MOVEGENERATOR_H_
 
 #include <vector>
+#include <cassert>
 
 #include "Types.h"
 #include "GenerateMagics.h"
@@ -275,7 +276,36 @@ extern U64* BISHOP_MOVES[Square::SQ_NUM];
 void init();
 
 U64 genKnightMoves(U64 piece, U64 myBoard);
+U64 genBishopMoves(U64 piece, U64 myBoard, U64 oppBoard);
+U64 genRookMoves(U64 piece, U64 myBoard, U64 oppBoard);
+U64 genQueenMoves(U64 piece, U64 myBoard, U64 oppBoard);
 U64 genKingMoves(U64 piece, U64 myBoard);
+
+template<Color player>
+U64 genPawnMoves(U64 pieces, U64 myBoard, U64 oppBoard, Square epSquare) {
+  assert(player == WHITE || player == BLACK);
+
+  constexpr Direction up      = (player == WHITE) ? N : S;     // Direction pawns move
+  constexpr Direction upLeft  = WHITE ? NW : SE;               // Capture left
+  constexpr Direction upRight = WHITE ? NE : SW;               // Capture right
+  constexpr U64 rank3         = WHITE ? RANK_3_BB : RANK_6_BB; // One move from start rank
+  constexpr U64 leftMask      = WHITE ? ~FILE_A_BB : ~FILE_H_BB;
+  constexpr U64 rightMask     = WHITE ? ~FILE_H_BB : ~FILE_A_BB;
+  // Bitboard of the en passant square, if it exists.
+  U64 epSquareBB = epSquare == SQ_NONE ? 0 : 1ULL << epSquare;
+
+  U64 blockersMask = ~(myBoard | oppBoard);
+
+  // Moving one square up
+  U64 onePush = shift(pieces, up) & blockersMask;
+  // Moving two squares up, if on the starting rank
+  U64 twoPush = shift(onePush & rank3, up) & blockersMask;
+  // Capturing, either normally or by en passant
+  U64 capture = shift(pieces, upLeft) & rightMask & (oppBoard | epSquareBB);
+  capture    |= shift(pieces, upRight) & leftMask & (oppBoard | epSquareBB);
+
+  return onePush | twoPush | capture;
+}
 }
 
 #endif /* MOVEGENERATOR_H_ */

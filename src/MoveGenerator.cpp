@@ -45,6 +45,28 @@ U64 MoveGen::genKnightMoves(U64 piece, U64 myBoard) {
   return KNIGHT_MOVES[index] & ~myBoard;
 }
 
+U64 MoveGen::genBishopMoves(U64 piece, U64 myBoard, U64 oppBoard) {
+  int square = Bitboard::bsfIndex(piece);
+  assert(BISHOP_MOVES[square] != nullptr);
+  U64 occupancy = OCCUPANCY_MASKS_BISHOP[square] & (myBoard | oppBoard);
+  int magicIndex = (occupancy * MAGIC_NUMBERS_BISHOPS[square]) >> MAGIC_NUMBER_SHIFTS_BISHOP[square];
+
+  return BISHOP_MOVES[square][magicIndex] & ~myBoard;
+}
+
+U64 MoveGen::genRookMoves(U64 piece, U64 myBoard, U64 oppBoard) {
+  int square = Bitboard::bsfIndex(piece);
+  assert(ROOK_MOVES[square] != nullptr);
+  U64 occupancy = OCCUPANCY_MASKS_ROOK[square] & (myBoard | oppBoard);
+  int magicIndex = (occupancy * MAGIC_NUMBERS_ROOKS[square]) >> MAGIC_NUMBER_SHIFTS_ROOK[square];
+
+  return ROOK_MOVES[square][magicIndex] & ~myBoard;
+}
+
+U64 MoveGen::genQueenMoves(U64 piece, U64 myBoard, U64 oppBoard) {
+  return genBishopMoves(piece, myBoard, oppBoard) | genRookMoves(piece, myBoard, oppBoard);
+}
+
 U64 MoveGen::genKingMoves(U64 piece, U64 myBoard) {
   int index = Bitboard::bsfIndex(piece);
   return KING_MOVES[index] & ~myBoard;

@@ -31,6 +31,28 @@ enum Rank : int {
   RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8,
   RANK_NONE
 };
+// File bitboards
+enum FileBB : U64 {
+  FILE_A_BB = 0x0101010101010101L,
+  FILE_B_BB = 0x0202020202020202L,
+  FILE_C_BB = 0x0404040404040404L,
+  FILE_D_BB = 0x0808080808080808L,
+  FILE_E_BB = 0x1010101010101010L,
+  FILE_F_BB = 0x2020202020202020L,
+  FILE_G_BB = 0x4040404040404040L,
+  FILE_H_BB = 0x8080808080808080L
+};
+// Rank bitboards
+enum RankBB : U64 {
+  RANK_1_BB = 0x00000000000000FFL,
+  RANK_2_BB = 0x000000000000FF00L,
+  RANK_3_BB = 0x0000000000FF0000L,
+  RANK_4_BB = 0x00000000FF000000L,
+  RANK_5_BB = 0x000000FF00000000L,
+  RANK_6_BB = 0x0000FF0000000000L,
+  RANK_7_BB = 0x00FF000000000000L,
+  RANK_8_BB = 0xFF00000000000000L
+};
 
 // Cardinal directions on the board from white's perspective, using LERF
 // mapping.
@@ -83,12 +105,25 @@ const int PROMOTION_SHIFT = 12;
 const int SPECIAL_SHIFT   = 14;
 
 /**
- * Scored move
+ * Scored move.
  */
-struct SMove {
+struct MoveEntry {
   Move* move;
   int score;
 };
+
+/**
+ * Shifts a given bitboard in a direction.
+ *
+ * @param bb The bitboard to shift.
+ * @param d The direction to shift the bitboard in.
+ * @return The given bitboard, with all bits shifted in the given direction.
+ */
+constexpr U64 shift(U64 bb, Direction d) {
+  return d == NW ? bb << NW : d == N  ? bb << N  : d == NE ? bb << NE :
+         d == E  ? bb << E  : d == SE ? bb >> NW : d == S  ? bb >> N  :
+         d == SW ? bb >> NE : d == W  ? bb >> E  : 0;
+}
 
 /**
  * Returns the file of the given square.

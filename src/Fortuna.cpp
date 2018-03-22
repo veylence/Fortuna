@@ -24,12 +24,19 @@ int main() {
   //    std::cout << std::hex << m << std::endl;
   //  }
 
-//  auto start = std::chrono::high_resolution_clock::now();
-//  auto time = std::chrono::high_resolution_clock::now() - start;
-//  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
+  auto start = std::chrono::high_resolution_clock::now();
 
+  MoveGen::init();
   U64 sq = 1ULL << 0;
-  U64 b = MoveGen::genKnightMoves(sq, 1ULL << 10);
-  std::cout << Bitboard::toString(sq) << std::endl;
-  std::cout << Bitboard::toString(b) << std::endl;
+//  U64 b = MoveGen::genKnightMoves(sq, 1ULL << 10);
+//  U64 b = MoveGen::genBishopMoves(sq, 1ULL << 10, 0);
+  for(int i = 0; i < 100000000; i++) {
+  U64 b = MoveGen::genRookMoves(sq, 1ULL << 32, 1ULL << 32);
+//  U64 b = MoveGen::genKnightMoves(sq, 1ULL << 32);
+  }
+//  std::cout << Bitboard::toString(sq) << std::endl;
+//  std::cout << Bitboard::toString(b) << std::endl;
+
+  auto time = std::chrono::high_resolution_clock::now() - start;
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
 }
