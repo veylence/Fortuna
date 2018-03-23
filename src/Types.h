@@ -1,8 +1,10 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include<cstdint>
+
 // Unsigned 64-bit number
-typedef unsigned long long U64;
+typedef uint64_t U64;
 
 // Dimension of the board, in squares
 const int SIZE = 8;
@@ -119,10 +121,11 @@ struct MoveEntry {
  * @param d The direction to shift the bitboard in.
  * @return The given bitboard, with all bits shifted in the given direction.
  */
-constexpr U64 shift(U64 bb, Direction d) {
-  return d == NW ? bb << NW : d == N  ? bb << N  : d == NE ? bb << NE :
-         d == E  ? bb << E  : d == SE ? bb >> NW : d == S  ? bb >> N  :
-         d == SW ? bb >> NE : d == W  ? bb >> E  : 0;
+template<Direction D>
+constexpr U64 shift(U64 bb) {
+  return D == NW ? bb << NW : D == N  ? bb << N  : D == NE ? bb << NE :
+         D == E  ? bb << E  : D == SE ? bb >> NW : D == S  ? bb >> N  :
+         D == SW ? bb >> NE : D == W  ? bb >> E  : 0;
 }
 
 /**

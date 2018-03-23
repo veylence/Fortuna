@@ -1,12 +1,16 @@
 #ifndef SRC_POSITION_H_
 #define SRC_POSITION_H_
 
+#include <string>
+#include <sstream>
+#include <cctype>
+
 #include "Types.h"
 #include "Bitboard.h"
 
 class Position {
 public:
-  Position();
+  Position(std::string fen=STARTING_POSITION);
 private:
   // Bitboards for each player's pieces
   U64 piecesByType[Piece::PIECE_NUM];
@@ -25,6 +29,8 @@ private:
   U64 signature;
   // Castling rights of both players
   int castlingRights;
+
+  static const std::string STARTING_POSITION;
 };
 
 #endif /* SRC_POSITION_H_ */
