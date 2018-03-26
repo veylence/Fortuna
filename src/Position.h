@@ -4,12 +4,15 @@
 #include <string>
 #include <sstream>
 #include <cctype>
+#include <random>
 
 #include "Types.h"
 #include "Bitboard.h"
 
 class Position {
 public:
+  static void init();
+
   Position(std::string fen=STARTING_POSITION);
 private:
   // Bitboards for each player's pieces
@@ -29,6 +32,10 @@ private:
   U64 signature;
   // Castling rights of both players
   int castlingRights;
+
+  void addPiece(Piece piece, int square);
+  void removePiece(Piece piece, int square);
+  void movePiece(Piece piece, int orig, int dest);
 
   static const std::string STARTING_POSITION;
 };

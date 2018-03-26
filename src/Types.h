@@ -26,12 +26,14 @@ enum Square : int {
 // Files of the board
 enum File : int {
   FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H,
-  FILE_NONE
+  FILE_NONE,
+  FILE_NUM = 8
 };
 // Ranks of the board
 enum Rank : int {
   RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8,
-  RANK_NONE
+  RANK_NONE,
+  RANK_NUM = 8
 };
 // File bitboards
 enum FileBB : U64 {
@@ -86,9 +88,12 @@ enum Piece : int {
 // Player castling rights
 enum CastlingRight : int {
   NO_CASTLING,
-  W_KINGSIDE, W_QUEENSIDE,
-  B_KINGSIDE, B_QUEENSIDE,
-  ANY_CASTLING = W_KINGSIDE | W_QUEENSIDE | B_KINGSIDE | B_QUEENSIDE
+  W_KINGSIDE  = 1 << 0,
+  W_QUEENSIDE = 1 << 1,
+  B_KINGSIDE  = 1 << 2,
+  B_QUEENSIDE = 1 << 3,
+  ANY_CASTLING = W_KINGSIDE | W_QUEENSIDE | B_KINGSIDE | B_QUEENSIDE,
+  CASTLING_NUM = 16 // Number of combinations of castling rights
 };
 
 // A move is represented by a 16-bit integer.
