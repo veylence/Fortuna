@@ -15,6 +15,9 @@ int main() {
   Position::init();
   MoveGen::init();
 
+  Position pos;
+  std::cout << pos << std::endl;
+
   auto start = std::chrono::high_resolution_clock::now();
 
   U64 sq = 1ULL << 0;

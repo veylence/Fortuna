@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cctype>
 #include <random>
+#include <iostream>
 
 #include "Types.h"
 #include "Bitboard.h"
@@ -14,9 +15,10 @@ public:
   static void init();
 
   Position(std::string fen=STARTING_POSITION);
+  friend std::ostream& operator<<(std::ostream& os, const Position& pos);
 private:
   // Bitboards for each player's pieces
-  U64 piecesByType[Piece::PIECE_NUM];
+  U64 piecesByType[Piece::PIECE_MAX];
   // Bitboards for each player
   U64 piecesByColor[Color::COLOR_NUM];
 

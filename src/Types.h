@@ -1,7 +1,9 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-#include<cstdint>
+#include <cstdint>
+#include <string>
+#include <cassert>
 
 // Unsigned 64-bit number
 typedef uint64_t U64;
@@ -79,11 +81,16 @@ enum Color : int {
 
 // Piece types and colors
 enum Piece : int {
-  W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
-  B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING,
   PIECE_NONE,
-  PIECE_NUM = 12
+  W_PAWN = 1, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
+  B_PAWN = 9, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING,
+  PIECE_NUM = 12, // Number of pieces
+  PIECE_MAX = 15  // Array size such that all pieces would have an index
 };
+// The index of each piece corresponds to the char representation of the piece
+const std::string PIECE_CHARS = "-PNBRQK--pnbrqk";
+constexpr Piece PIECES[] = {W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
+                            B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING};
 
 // Player castling rights
 enum CastlingRight : int {
@@ -154,6 +161,17 @@ constexpr Rank rankOf(Square s) {
   // The rank of a square is: square / 8. Here this is done via division by
   // right shift.
   return Rank(s >> 3);
+}
+
+/**
+ * Returns the color of the given piece.
+ *
+ * @param p The piece to get the color of.
+ * @return The color of the given piece.
+ */
+inline Color colorOf(Piece p) {
+  assert(p != PIECE_NONE);
+  return Color(p >> 3);
 }
 
 #endif /* TYPES_H_ */
