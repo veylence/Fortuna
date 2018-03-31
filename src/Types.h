@@ -91,6 +91,12 @@ enum Piece : int {
 const std::string PIECE_CHARS = "-PNBRQK--pnbrqk";
 constexpr Piece PIECES[] = {W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
                             B_PAWN, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING};
+// Piece types
+enum PieceTypes : int {
+  PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
+  PIECE_TYPE_NONE,
+  PIECE_TYPE_NUM = 6
+};
 
 // Player castling rights
 enum CastlingRight : int {
@@ -122,7 +128,7 @@ const int SPECIAL_SHIFT   = 14;
  * Scored move.
  */
 struct MoveEntry {
-  Move* move;
+  Move move;
   int score;
 };
 

@@ -7,6 +7,7 @@
 
 #include "Types.h"
 #include "GenerateMagics.h"
+#include "Position.h"
 
 namespace MoveGen {
 // How many 1 bits in the occupancy mask of a rook on some square.
@@ -281,24 +282,24 @@ U64 genRookMovesBB(U64 piece, U64 myBoard, U64 oppBoard);
 U64 genQueenMovesBB(U64 piece, U64 myBoard, U64 oppBoard);
 U64 genKingMovesBB(U64 piece, U64 myBoard);
 
-template<Color player, Square epSquare>
-U64 genPawnMovesBB(U64 pieces, U64 myBoard, U64 oppBoard) {
+template<Color player>
+U64 genPawnMovesBB(U64 pieces, U64 myBoard, U64 oppBoard, Square epSquare) {
   assert(player == WHITE || player == BLACK);
 
-  constexpr Direction up      = (player == WHITE) ? N : S;       // Direction pawns move
-  constexpr Direction upLeft  = WHITE ? NW : SE;                 // Capture left
-  constexpr Direction upRight = WHITE ? NE : SW;                 // Capture right
-  constexpr U64 rank3         = WHITE ? RANK_3_BB : RANK_6_BB;   // One move from start rank
-  constexpr U64 leftMask      = WHITE ? ~FILE_A_BB : ~FILE_H_BB; // Leftmost file mask
-  constexpr U64 rightMask     = WHITE ? ~FILE_H_BB : ~FILE_A_BB; // Rightmost file mask
+  constexpr Direction up      = (player == WHITE) ? N : S;                   // Direction pawns move
+  constexpr Direction upLeft  = (player == WHITE) ? NW : SE;                 // Capture left
+  constexpr Direction upRight = (player == WHITE) ? NE : SW;                 // Capture right
+  constexpr U64 rank3         = (player == WHITE) ? RANK_3_BB : RANK_6_BB;   // One move from start rank
+  constexpr U64 leftMask      = (player == WHITE) ? ~FILE_A_BB : ~FILE_H_BB; // Leftmost file mask
+  constexpr U64 rightMask     = (player == WHITE) ? ~FILE_H_BB : ~FILE_A_BB; // Rightmost file mask
   // Bitboard of the en passant square, if it exists.
-  constexpr U64 epSquareBB = epSquare == SQ_NONE ? 0 : 1ULL << epSquare;
+  U64 epSquareBB = epSquare == SQ_NONE ? 0 : 1ULL << epSquare;
   // Bitboard of empty squares that can be moved to (i.e. all non-blockers)
   U64 empty = ~(myBoard | oppBoard);
 
   // Moving one square up
   U64 onePush = shift<up>(pieces) & empty;
-  // Moving two squares up, if on the starting rank
+  // Moving two squares up (only for pawns on the starting rank)
   U64 twoPush = shift<up>(onePush & rank3) & empty;
   // Capturing, either normally or by en passant
   U64 capture = shift<upLeft>(pieces) & rightMask & (oppBoard | epSquareBB);
@@ -307,7 +308,7 @@ U64 genPawnMovesBB(U64 pieces, U64 myBoard, U64 oppBoard) {
   return onePush | twoPush | capture;
 }
 
-std::vector<MoveEntry> generatePseudoMoves();
+std::vector<MoveEntry> generatePseudoMoves(const Position& pos);
 }
 
 #endif /* MOVEGENERATOR_H_ */

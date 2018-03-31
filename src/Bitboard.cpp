@@ -47,8 +47,3 @@ int Bitboard::popCount(U64 bitboard) {
   bitboard = (bitboard + (bitboard >> 4)) & 0x0F0F0F0F0F0F0F0FULL;
   return (bitboard * 0x0101010101010101ULL) >> 56;
 }
-
-int Bitboard::bsfIndex(U64 bitboard) {
-  assert(bitboard != 0);
-  return BIT_SCAN_INDEX[((bitboard & -bitboard) * DE_BRUIJN_64) >> 58];
-}

@@ -16,6 +16,11 @@ public:
 
   Position(std::string fen=STARTING_POSITION);
   friend std::ostream& operator<<(std::ostream& os, const Position& pos);
+
+  Color getColorToMove() const { return colorToMove; };
+  Square getEpSquare() const { return epSquare; };
+  U64 getPieceBB(Piece piece) const { return piecesByType[piece]; };
+  U64 getColorBB(Color color) const { return piecesByColor[color]; };
 private:
   // Bitboards for each player's pieces
   U64 piecesByType[Piece::PIECE_MAX];

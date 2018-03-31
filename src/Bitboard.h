@@ -84,7 +84,10 @@ int popCount(U64 bitboard);
  * not be 0.
  * @return The index of the LS1B in the given bitboard.
  */
-int bsfIndex(U64 bitboard);
+inline int bsfIndex(U64 bitboard) {
+  assert(bitboard != 0);
+  return BIT_SCAN_INDEX[((bitboard & -bitboard) * DE_BRUIJN_64) >> 58];
+}
 }
 
 #endif /* BITBOARD_H_ */
