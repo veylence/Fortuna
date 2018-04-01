@@ -40,74 +40,138 @@ void MoveGen::init() {
   }
 }
 
-U64 MoveGen::genKnightMovesBB(U64 piece, U64 myBoard) {
+namespace {
+
+U64 genKnightMovesBB(U64 piece, U64 myBoard) {
   int index = Bitboard::bsfIndex(piece);
-  return KNIGHT_MOVES[index] & ~myBoard;
+  return MoveGen::KNIGHT_MOVES[index] & ~myBoard;
 }
 
-U64 MoveGen::genBishopMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
+U64 genBishopMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
   int square = Bitboard::bsfIndex(piece);
-  assert(BISHOP_MOVES[square] != nullptr);
-  U64 occupancy = OCCUPANCY_MASKS_BISHOP[square] & (myBoard | oppBoard);
-  int magicIndex = (occupancy * MAGIC_NUMBERS_BISHOPS[square]) >> MAGIC_NUMBER_SHIFTS_BISHOP[square];
+  assert(MoveGen::BISHOP_MOVES[square] != nullptr);
+  U64 occupancy = MoveGen::OCCUPANCY_MASKS_BISHOP[square] & (myBoard | oppBoard);
+  int magicIndex = (occupancy * MoveGen::MAGIC_NUMBERS_BISHOPS[square]) >> MoveGen::MAGIC_NUMBER_SHIFTS_BISHOP[square];
 
-  return BISHOP_MOVES[square][magicIndex] & ~myBoard;
+  return MoveGen::BISHOP_MOVES[square][magicIndex] & ~myBoard;
 }
 
-U64 MoveGen::genRookMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
+U64 genRookMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
   int square = Bitboard::bsfIndex(piece);
-  assert(ROOK_MOVES[square] != nullptr);
-  U64 occupancy = OCCUPANCY_MASKS_ROOK[square] & (myBoard | oppBoard);
-  int magicIndex = (occupancy * MAGIC_NUMBERS_ROOKS[square]) >> MAGIC_NUMBER_SHIFTS_ROOK[square];
+  assert(MoveGen::ROOK_MOVES[square] != nullptr);
+  U64 occupancy = MoveGen::OCCUPANCY_MASKS_ROOK[square] & (myBoard | oppBoard);
+  int magicIndex = (occupancy * MoveGen::MAGIC_NUMBERS_ROOKS[square]) >> MoveGen::MAGIC_NUMBER_SHIFTS_ROOK[square];
 
-  return ROOK_MOVES[square][magicIndex] & ~myBoard;
+  return MoveGen::ROOK_MOVES[square][magicIndex] & ~myBoard;
 }
 
-U64 MoveGen::genQueenMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
+U64 genQueenMovesBB(U64 piece, U64 myBoard, U64 oppBoard) {
   return genBishopMovesBB(piece, myBoard, oppBoard) | genRookMovesBB(piece, myBoard, oppBoard);
 }
 
-U64 MoveGen::genKingMovesBB(U64 piece, U64 myBoard) {
+U64 genKingMovesBB(U64 piece, U64 myBoard) {
   int index = Bitboard::bsfIndex(piece);
-  return KING_MOVES[index] & ~myBoard;
+  return MoveGen::KING_MOVES[index] & ~myBoard;
+}
+
+template<Color player>
+U64 genPawnMovesBB(U64 pieces, U64 myBoard, U64 oppBoard, U64 epSquareBB) {
+  assert(player == WHITE || player == BLACK);
+
+  constexpr Direction up      = (player == WHITE) ? N : S;                   // Direction pawns move
+  constexpr Direction upLeft  = (player == WHITE) ? NW : SE;                 // Capture left
+  constexpr Direction upRight = (player == WHITE) ? NE : SW;                 // Capture right
+  constexpr U64 rank3         = (player == WHITE) ? RANK_3_BB : RANK_6_BB;   // One move from start rank
+  constexpr U64 leftMask      = (player == WHITE) ? ~FILE_A_BB : ~FILE_H_BB; // Leftmost file mask
+  constexpr U64 rightMask     = (player == WHITE) ? ~FILE_H_BB : ~FILE_A_BB; // Rightmost file mask
+  // Bitboard of empty squares that can be moved to (i.e. all non-blockers)
+  U64 empty = ~(myBoard | oppBoard);
+
+  // Moving one square up
+  U64 onePush = shift<up>(pieces) & empty;
+  // Moving two squares up (only for pawns on the starting rank)
+  U64 twoPush = shift<up>(onePush & rank3) & empty;
+  // Capturing, either normally or by en passant
+  U64 capture = shift<upLeft>(pieces) & rightMask & (oppBoard | epSquareBB);
+  capture    |= shift<upRight>(pieces) & leftMask & (oppBoard | epSquareBB);
+
+  return onePush | twoPush | capture;
+}
 }
 
 std::vector<MoveEntry> MoveGen::generatePseudoMoves(const Position& pos) {
   std::vector<MoveEntry> moves;
 
-  U64 piecesBB[PIECE_TYPE_NUM];
   U64 myBoard = pos.getColorBB(pos.getColorToMove());
   U64 oppBoard = pos.getColorBB(Color(!pos.getColorToMove()));
+  U64 epSquareBB = pos.getEpSquare() == SQ_NONE ? 0 : 1ULL << pos.getEpSquare();
   Piece pieceOffset = pos.getColorToMove() == WHITE ? W_PAWN : B_PAWN;
 
-  piecesBB[PAWN] = pos.getPieceBB(Piece(pieceOffset + PAWN));
-  piecesBB[KNIGHT] = pos.getPieceBB(Piece(pieceOffset + KNIGHT));
-  piecesBB[BISHOP] = pos.getPieceBB(Piece(pieceOffset + BISHOP));
-  piecesBB[ROOK] = pos.getPieceBB(Piece(pieceOffset + ROOK));
-  piecesBB[QUEEN] = pos.getPieceBB(Piece(pieceOffset + QUEEN));
-  piecesBB[KING] = pos.getPieceBB(Piece(pieceOffset + KING));
+  int total = 0;
 
-//  if(pos.getColorToMove() == WHITE) {
-//    piecesMovesBB[PAWN] = genPawnMovesBB<WHITE>(piecesBB[PAWN], myBoard, oppBoard, pos.getEpSquare());
-//  } else {
-//    piecesMovesBB[PAWN] = genPawnMovesBB<BLACK>(piecesBB[PAWN], myBoard, oppBoard, pos.getEpSquare());
-//  }
-//  piecesMovesBB[KNIGHT] = genKnightMovesBB(piecesBB[KNIGHT], myBoard);
-//  piecesMovesBB[BISHOP] = genBishopMovesBB(piecesBB[BISHOP], myBoard, oppBoard);
-//  piecesMovesBB[ROOK] = genRookMovesBB(piecesBB[ROOK], myBoard, oppBoard);
-//  piecesMovesBB[QUEEN] = genQueenMovesBB(piecesBB[QUEEN], myBoard, oppBoard);
-//  piecesMovesBB[KING] = genKingMovesBB(piecesBB[KING], myBoard);
+  U64 pieces = pos.getPieceBB(Piece(pieceOffset + PAWN));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    Color color = pos.getColorToMove();
+    U64 pieceMoves;
+    if(color == WHITE) {
+      pieceMoves = genPawnMovesBB<WHITE>(pieceOrig, myBoard, oppBoard, epSquareBB);
+    } else {
+      pieceMoves = genPawnMovesBB<BLACK>(pieceOrig, myBoard, oppBoard, epSquareBB);
+    }
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
+    }
+  }
 
-  for(Piece p : PIECES) {
-    U64 allPieces = piecesBB[p];
+  pieces = pos.getPieceBB(Piece(pieceOffset + KNIGHT));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    U64 pieceMoves = genKnightMovesBB(pieceOrig, myBoard);
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
+    }
+  }
 
-    // Process each individual piece
-    while(allPieces) {
-      U64 pieceOrig = Bitboard::popLsb(allPieces);
-//      U64 pieceMoves = piecesMovesBB[p];
-//      while(pieceMoves) {
-//        U64 pieceDest = Bitboard::popLsb(pieceMoves);
-//      }
+  pieces = pos.getPieceBB(Piece(pieceOffset + BISHOP));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    U64 pieceMoves = genBishopMovesBB(pieceOrig, myBoard, oppBoard);
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
+    }
+  }
+
+  pieces = pos.getPieceBB(Piece(pieceOffset + ROOK));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    U64 pieceMoves = genRookMovesBB(pieceOrig, myBoard, oppBoard);
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
+    }
+  }
+
+  pieces = pos.getPieceBB(Piece(pieceOffset + QUEEN));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    U64 pieceMoves = genQueenMovesBB(pieceOrig, myBoard, oppBoard);
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
+    }
+  }
+
+  pieces = pos.getPieceBB(Piece(pieceOffset + KING));
+  while(pieces) {
+    U64 pieceOrig = Bitboard::popLsb(pieces);
+    U64 pieceMoves = genKingMovesBB(pieceOrig, myBoard);
+    while(pieceMoves) {
+      U64 pieceDest = Bitboard::popLsb(pieceMoves);
+      total++;
     }
   }
 

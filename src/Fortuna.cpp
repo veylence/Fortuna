@@ -20,27 +20,23 @@ int main() {
 
   MoveGen::generatePseudoMoves(pos);
 
-  auto start = std::chrono::high_resolution_clock::now();
+//  auto start = std::chrono::high_resolution_clock::now();
 
   U64 sq = 1ULL << 0;
 //  U64 b = MoveGen::genKnightMoves(sq, 1ULL << 10);
 //  U64 b = MoveGen::genBishopMoves(sq, 1ULL << 10, 0);
   clock_t c = clock();
-  U64 b = 0;
-  for(int i = 0; i < 120000000; ++i) {
-//    b |= Bitboard::bsfIndex(i+1);
-  b |= MoveGen::genRookMovesBB(sq, E4, E4);
-//  b |= MoveGen::genPawnMovesBB<WHITE>(sq, b, b, A1);
-//  b |= MoveGen::genQueenMovesBB(sq, b, b);
-//  b |= MoveGen::genKnightMovesBB(sq, E4);
-//  b |= MoveGen::genKingMovesBB(sq, b);
+  U64 b = 1;
+  for(U64 i = 1; i <= 5072213; ++i) {
+    MoveGen::generatePseudoMoves(pos);
   }
-  std::cout << "BB: " << b << std::endl;
+
+  std::cout << "b: " << b << std::endl;
 //  std::cout << Bitboard::toString(sq) << std::endl;
 //  std::cout << Bitboard::toString(b) << std::endl;
-  std::cout << 1.f*(clock() - c)/CLOCKS_PER_SEC << std::endl;
-  auto time = std::chrono::high_resolution_clock::now() - start;
-  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
+  std::cout << double(clock() - c)/CLOCKS_PER_SEC/1.0 << std::endl;
+//  auto time = std::chrono::high_resolution_clock::now() - start;
+//  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << std::endl;
 }
 
 

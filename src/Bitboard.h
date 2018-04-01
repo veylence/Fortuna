@@ -11,7 +11,7 @@ namespace Bitboard {
 // 64-bit de Bruijn sequence used to determine index in a bitscan
 const U64 DE_BRUIJN_64 = 0x03f79d71b4cb0a89ULL;
 // Lookup table for bitscan indices
-const int BIT_SCAN_INDEX[Square::SQ_NUM] = {
+const int BIT_SCAN_INDEX[SQ_NUM] = {
   0,  1,  48,  2, 57, 49, 28,  3,
   61, 58, 50, 42, 38, 29, 17,  4,
   62, 55, 59, 36, 53, 51, 43, 22,

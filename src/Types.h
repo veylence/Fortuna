@@ -117,6 +117,11 @@ enum CastlingRight : int {
 enum Move : int {
   MOVE_NONE
 };
+enum Special : int {
+  SP_PROMOTION = 1,
+  SP_EP = 2,
+  SP_CASTLE = 3
+};
 const int ORIGIN_MASK    = 0b0000111111000000;
 const int PROMOTION_MASK = 0b0011000000000000;
 const int SPECIAL_MASK   = 0b1100000000000000;
@@ -131,6 +136,15 @@ struct MoveEntry {
   Move move;
   int score;
 };
+
+Move makeMove(U64 origBB, U64 destBB, Piece promotion, Special special) {
+  int move = Bitboard::bsfIndex(destBB);
+  move |= Bitboard::bsfIndex(origBB) << ORIGIN_SHIFT;
+  move |= promotion << PROMOTION_SHIFT;
+  move |= special << SPECIAL_SHIFT;
+
+  return Move(move);
+}
 
 /**
  * Shifts a given bitboard in a direction.
